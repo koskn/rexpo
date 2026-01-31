@@ -296,7 +296,7 @@ function statusTextForPoster(p, nowMin){
   if(pp.slots.length===0){
     return { cls: "statusText", text: "時間未入力" };
   }
-  return { cls: "statusText", text: "以降の発表なし" };
+  return { cls: "statusText", text: "全発表終了" };
 }
 
 function renderTimeTagsHtml(slots){
