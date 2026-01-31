@@ -1,0 +1,1065 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+  <title>ポスターセッション タイムテーブル</title>
+  <style>
+    :root{
+      --bg:#0b0f17;
+      --text:#e5e7eb;
+      --muted:#9ca3af;
+      --shadow: 0 10px 28px rgba(0,0,0,.35);
+      --radius:18px;
+      --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      --sans: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji","Segoe UI Emoji";
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0;
+      font-family:var(--sans);
+      background:
+        radial-gradient(900px 650px at 10% 0%, #122044 0%, rgba(18,32,68,0) 60%),
+        radial-gradient(700px 520px at 100% 10%, #1a2b2a 0%, rgba(26,43,42,0) 55%),
+        var(--bg);
+      color:var(--text);
+      overflow-x:hidden;
+    }
+    .wrap{max-width:980px;margin:0 auto;padding:10px 12px 90px}
+    .card{
+      background:linear-gradient(180deg, rgba(255,255,255,.03), rgba(255,255,255,.01));
+      border:1px solid rgba(255,255,255,.10);
+      border-radius:var(--radius);
+      box-shadow: var(--shadow);
+      overflow:hidden;
+    }
+    .card.pad{padding:12px}
+    .small{font-size:12px;color:var(--muted)}
+    .mono{font-family:var(--mono)}
+    h1{font-size:15px;margin:0;letter-spacing:.2px}
+
+    /* sticky top */
+    .top{
+      position:sticky;
+      top:0;
+      z-index:20;
+      padding-top: env(safe-area-inset-top);
+      backdrop-filter: blur(10px);
+      background: rgba(11,15,23,.65);
+      border-bottom:1px solid rgba(255,255,255,.06);
+    }
+    .topInner{
+      max-width:980px;
+      margin:0 auto;
+      padding:8px 12px;
+      display:grid;
+      gap:8px;
+    }
+    .headerRow{
+      display:flex;
+      justify-content:space-between;
+      align-items:flex-start;
+      gap:8px;
+    }
+    .clock{
+      display:flex;
+      flex-direction:column;
+      align-items:flex-end;
+      gap:2px;
+      min-width:108px;
+    }
+    .clock .t{
+      font-family:var(--mono);
+      font-size:13px;
+      letter-spacing:.3px;
+      padding:5px 9px;
+      border-radius:999px;
+      border:1px solid rgba(255,255,255,.12);
+      background:rgba(255,255,255,.03);
+    }
+    .badge{
+      font-size:10px;
+      padding:2px 6px;
+      border-radius:999px;
+      border:1px solid rgba(96,165,250,.35);
+      background:rgba(96,165,250,.14);
+      color:#dbeafe;
+    }
+
+    .controls{display:grid;gap:8px}
+    .searchRow{
+      display:grid;
+      grid-template-columns: 1fr auto;
+      gap:8px;
+      align-items:center;
+    }
+    input[type="text"]{
+      width:100%;
+      min-width:0;
+      background:rgba(255,255,255,.03);
+      border:1px solid rgba(255,255,255,.12);
+      border-radius:14px;
+      padding:9px 10px;
+      color:var(--text);
+      outline:none;
+      font-size:13px;
+    }
+    input[type="text"]::placeholder{color:rgba(156,163,175,.8)}
+
+    .pillBtn{
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      gap:6px;
+      padding:9px 10px;
+      border-radius:14px;
+      border:1px solid rgba(255,255,255,.12);
+      background:rgba(255,255,255,.03);
+      color:var(--text);
+      cursor:pointer;
+      font-size:12px;
+      white-space:nowrap;
+      min-width:0;
+    }
+    .pillBtn:active{transform: translateY(1px)}
+    .pillBtn.primary{
+      border-color: rgba(96,165,250,.35);
+      background: rgba(96,165,250,.14);
+      color:#dbeafe;
+    }
+    .pillBtn.icon{width:40px;padding:9px 0;font-family:var(--mono)}
+
+    .modeRow{
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap:8px;
+    }
+
+    .chips{
+      display:flex;
+      flex-wrap:wrap;
+      gap:6px;
+    }
+    .chip{
+      display:flex;
+      align-items:center;
+      gap:7px;
+      padding:7px 9px;
+      border-radius:999px;
+      border:1px solid rgba(255,255,255,.10);
+      background:rgba(255,255,255,.02);
+      user-select:none;
+      white-space:nowrap;
+      cursor:pointer;
+      font-size:12px;
+    }
+    .chip .dot{width:9px;height:9px;border-radius:999px;box-shadow:0 0 0 3px rgba(255,255,255,.06); background:#94a3b8;}
+    .chip.off{opacity:.55; filter: grayscale(.4)}
+
+    .list{margin-top:12px;display:grid;gap:10px}
+    .item{
+      padding:12px;
+      border-radius:18px;
+      border:1px solid rgba(255,255,255,.10);
+      background:rgba(255,255,255,.02);
+      display:grid;
+      gap:10px;
+      overflow:hidden;
+    }
+    .item.active{
+      border-color: rgba(52,211,153,.55);
+      box-shadow: 0 0 0 2px rgba(52,211,153,.14);
+    }
+    .itemTop{
+      display:flex;
+      gap:10px;
+      justify-content:space-between;
+      align-items:flex-start;
+      min-width:0;
+    }
+    .leftBlock{min-width:0}
+    .title{margin:0;font-size:14px;line-height:1.35;letter-spacing:.2px}
+    .line1{
+      display:flex;
+      gap:10px;
+      align-items:center;
+      flex-wrap:wrap;
+      min-width:0;
+    }
+    .board{
+      font-family:var(--mono);
+      font-size:13px;
+      color:rgba(229,231,235,.95);
+    }
+    .presenterRow{
+      display:flex;
+      align-items:center;
+      gap:8px;
+      min-width:0;
+    }
+    .presenter{
+      font-size:13px;
+      color:rgba(229,231,235,.92);
+      opacity:.95;
+      min-width:0;
+      overflow:hidden;
+      text-overflow:ellipsis;
+      white-space:nowrap;
+      max-width:60vw;
+    }
+    .catMini{
+      display:inline-flex;
+      align-items:center;
+      gap:6px;
+      padding:5px 8px;
+      border-radius:999px;
+      border:1px solid rgba(255,255,255,.10);
+      background:rgba(255,255,255,.02);
+      font-size:11px;
+      white-space:nowrap;
+      flex:0 0 auto;
+    }
+    .catMini .dot{width:8px;height:8px;border-radius:999px}
+
+    /* NEW: status under title, right-aligned */
+    .statusBelow{
+      display:flex;
+      justify-content:flex-end;
+      margin-top:6px;
+    }
+    .statusText{
+      font-size:12px;
+      padding:6px 8px;
+      border-radius:12px;
+      line-height:1.2;
+      white-space:nowrap;
+      border:1px solid rgba(255,255,255,.10);
+      background: rgba(255,255,255,.03);
+      color:rgba(156,163,175,.95);
+    }
+    .statusText.active{
+      color:#d1fae5;
+      border-color: rgba(52,211,153,.28);
+      background:rgba(52,211,153,.10);
+    }
+    .statusText.soon{
+      color:#dbeafe;
+      border-color: rgba(96,165,250,.28);
+      background: rgba(96,165,250,.10);
+    }
+
+    /* time tags (one-line, no comma) */
+    .meta{
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+      align-items:center;
+      font-size:12px;
+      color:var(--muted);
+    }
+    .timeTags{
+      display:flex;
+      flex-wrap:wrap;
+      gap:6px;
+      align-items:center;
+    }
+    .timeTag{
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      padding:5px 8px;
+      border-radius:999px;
+      border:2px solid rgba(255,255,255,.18);
+      background:rgba(255,255,255,.06);
+      color:rgba(229,231,235,.92);
+      font-family:var(--mono);
+      font-size:12px;
+      line-height:1;
+      white-space:nowrap;
+    }
+
+    /* per-poster timeline */
+    .pTimeline{
+      border-radius:16px;
+      border:1px solid rgba(255,255,255,.10);
+      background:rgba(255,255,255,.02);
+      padding:10px;
+      display:none;
+      gap:10px;
+    }
+    .pTimeline.on{display:grid;}
+    .pTimelineTop{
+      display:flex;
+      justify-content:space-between;
+      gap:10px;
+      align-items:center;
+    }
+    .pTimelineTop .range{
+      font-family:var(--mono);
+      font-size:12px;
+      color:var(--muted);
+    }
+
+    /* timeline track (no time labels) */
+    .pTrack{
+      position:relative;
+      border-radius:16px;
+      border:1px solid rgba(255,255,255,.10);
+      background:rgba(0,0,0,.14);
+      overflow:hidden;
+    }
+    .pNowMark{
+      position:absolute;
+      top:0; bottom:0;
+      width:2px;
+      background:rgba(52,211,153,.95);
+      box-shadow:0 0 0 3px rgba(52,211,153,.14);
+      pointer-events:none;
+      z-index:4;
+    }
+    .pBar{
+      position:absolute;
+      height:12px;
+      border-radius:999px;
+      border:2px solid rgba(255,255,255,.20);
+      background:rgba(255,255,255,.14);
+      z-index:3;
+    }
+    .pBar.active{
+      box-shadow: 0 0 0 2px rgba(52,211,153,.14);
+      outline: 2px solid rgba(52,211,153,.55);
+      outline-offset: 1px;
+    }
+
+    .bottomBar{
+      position:fixed;left:0;right:0;bottom:0;
+      padding:10px 12px calc(10px + env(safe-area-inset-bottom));
+      background: rgba(11,15,23,.82);
+      border-top:1px solid rgba(255,255,255,.08);
+      backdrop-filter: blur(10px);
+      z-index:30;
+    }
+    .bottomInner{max-width:980px;margin:0 auto;display:flex;gap:10px}
+    .bottomInner .pillBtn{flex:1}
+
+    /* admin */
+    .admin{margin-top:18px;border-top:1px dashed rgba(255,255,255,.16);padding-top:14px}
+    details{border-radius:16px;border:1px solid rgba(255,255,255,.10); background:rgba(255,255,255,.02); overflow:hidden}
+    summary{cursor:pointer; padding:12px 12px; list-style:none; user-select:none}
+    summary::-webkit-details-marker{display:none}
+    .detailsBody{padding:0 12px 12px}
+    textarea{
+      width:100%;
+      min-height:160px;
+      background:rgba(255,255,255,.03);
+      border:1px solid rgba(255,255,255,.12);
+      border-radius:14px;
+      padding:10px 10px;
+      color:var(--text);
+      outline:none;
+      font-family:var(--mono);
+      font-size:12px;
+    }
+    input[type="time"]{
+      width:100%;
+      background:rgba(255,255,255,.03);
+      border:1px solid rgba(255,255,255,.12);
+      border-radius:14px;
+      padding:10px 10px;
+      color:var(--text);
+      outline:none;
+      font-size:14px;
+    }
+    .adminGrid{display:grid; gap:10px}
+    .adminRow2{display:grid; grid-template-columns: 1fr 1fr; gap:10px}
+    .btnRow{display:flex; gap:10px; flex-wrap:wrap}
+    .btnRow .pillBtn{flex:1; min-width: 140px}
+    .danger{border-color: rgba(251,113,133,.35)!important; background: rgba(251,113,133,.12)!important; color:#ffe4e6!important;}
+  </style>
+</head>
+<body>
+
+  <div class="top">
+    <div class="topInner">
+      <div class="headerRow">
+        <div>
+          <h1>ポスターセッション</h1>
+          <div class="small">
+            セッション：<span class="mono" id="sessionText">10:30–12:30</span>
+            <span class="mono" id="countText" style="margin-left:10px;opacity:.9;">—</span>
+          </div>
+        </div>
+        <div class="clock">
+          <div class="t" id="clockText">--:--</div>
+          <div>
+            <span class="badge" id="clockBadge">NOW</span>
+            <span class="small" id="clockMode">リアルタイム</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="controls">
+        <div class="searchRow">
+          <input id="q" type="text" placeholder="検索：題目 / 発表者 / ポスター番号（例：P-12）" />
+          <button class="pillBtn icon" id="clearSearchBtn" aria-label="検索をクリア">×</button>
+        </div>
+
+        <div class="modeRow">
+          <button class="pillBtn" id="timelineToggleBtn">タイムライン</button>
+          <button class="pillBtn" id="onlyNowBtn">いま発表中のみ</button>
+        </div>
+
+        <div class="chips" id="catChips"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="wrap" id="app">
+    <div id="viewList" class="list"></div>
+
+    <!-- DEMO / ADMIN at bottom -->
+    <div class="admin" id="admin">
+      <div class="small" style="margin-bottom:10px;">▼ デモ用・運用補助UI（最下部）</div>
+
+      <details>
+        <summary>絞り込み（時間帯）</summary>
+        <div class="detailsBody">
+          <div class="adminGrid">
+            <div class="adminRow2">
+              <div>
+                <div class="small">時間で絞る（開始）</div>
+                <input id="fromTime" type="time" />
+              </div>
+              <div>
+                <div class="small">時間で絞る（終了）</div>
+                <input id="toTime" type="time" />
+              </div>
+            </div>
+
+            <label style="display:flex;gap:10px;align-items:center;">
+              <input id="onlyNowCheckbox" type="checkbox" />
+              <span>いま発表中のみ（チェックで固定）</span>
+            </label>
+
+            <div class="btnRow">
+              <button class="pillBtn" id="resetBtn">絞り込みリセット</button>
+            </div>
+          </div>
+        </div>
+      </details>
+
+      <details style="margin-top:10px;">
+        <summary>掲示用：現在時刻を固定 / 解除</summary>
+        <div class="detailsBody">
+          <div class="adminGrid">
+            <div class="adminRow2">
+              <div>
+                <div class="small">手動時刻（HH:MM）</div>
+                <input id="manualTime" type="time" />
+              </div>
+              <div>
+                <div class="small">状態</div>
+                <div class="card pad" style="box-shadow:none;border-radius:14px;">
+                  <div class="small" id="manualState">リアルタイム</div>
+                  <div class="mono" id="manualStateTime">—</div>
+                </div>
+              </div>
+            </div>
+            <div class="btnRow">
+              <button class="pillBtn primary" id="setManualBtn">固定</button>
+              <button class="pillBtn" id="clearManualBtn">解除</button>
+            </div>
+          </div>
+        </div>
+      </details>
+
+      <details style="margin-top:10px;">
+        <summary>データ編集（JSON貼り付け）</summary>
+        <div class="detailsBody">
+          <div class="small" style="margin-bottom:8px;">
+            各ポスターに <span class="mono">slots</span>（複数枠）を入れてください。
+          </div>
+          <textarea id="jsonArea"></textarea>
+          <div class="btnRow" style="margin-top:10px;">
+            <button class="pillBtn primary" id="applyJsonBtn">反映</button>
+            <button class="pillBtn" id="reloadJsonBtn">現在データを表示</button>
+            <button class="pillBtn" id="exportBtn">JSONを書き出し</button>
+          </div>
+        </div>
+      </details>
+
+      <details style="margin-top:10px;">
+        <summary>デモ用：時間を自動入力（複数枠）</summary>
+        <div class="detailsBody">
+          <div class="small" style="margin-bottom:10px;">
+            10:30〜12:30の範囲で、各ポスターに1〜2枠を自動割当します（実運用では手入力推奨）。
+          </div>
+          <div class="btnRow">
+            <button class="pillBtn danger" id="demoFillBtn">デモ用に時間を自動入力</button>
+          </div>
+        </div>
+      </details>
+    </div>
+  </div>
+
+  <div class="bottomBar">
+    <div class="bottomInner">
+      <button class="pillBtn" id="scrollTopBtn">上へ</button>
+      <button class="pillBtn" id="scrollAdminBtn">デモUIへ</button>
+    </div>
+  </div>
+
+  <script>
+    /***********************
+     * Session
+     ***********************/
+    const SESSION_START = "10:30";
+    const SESSION_END   = "12:30";
+
+    // 枠（時間タグ）＆タイムライン帯の色：slot順で対応
+    const SLOT_COLORS = [
+      "#60a5fa", // blue
+      "#fbbf24", // amber
+      "#fb7185", // rose
+      "#34d399", // emerald
+      "#a78bfa", // violet
+      "#22d3ee", // cyan
+      "#f97316", // orange
+      "#eab308", // yellow
+    ];
+
+    /***********************
+     * Utils
+     ***********************/
+    const $ = (sel, root=document) => root.querySelector(sel);
+    const $$ = (sel, root=document) => [...root.querySelectorAll(sel)];
+    function pad2(x){ return String(x).padStart(2,"0"); }
+
+    function timeToMin(t){
+      if(!t || typeof t !== "string") return null;
+      const m = t.match(/^(\d{1,2}):(\d{2})$/);
+      if(!m) return null;
+      const hh = Number(m[1]), mm = Number(m[2]);
+      if(hh<0||hh>23||mm<0||mm>59) return null;
+      return hh*60+mm;
+    }
+    function minToTime(m){
+      const hh = Math.floor(m/60), mm = m%60;
+      return `${pad2(hh)}:${pad2(mm)}`;
+    }
+    function escapeHtml(str){
+      return String(str).replace(/[&<>"']/g, s => ({
+        "&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;"
+      }[s]));
+    }
+    function hexToRgba(hex, alpha){
+      const h = hex.replace("#","").trim();
+      const full = (h.length===3) ? h.split("").map(x=>x+x).join("") : h;
+      const r = parseInt(full.slice(0,2),16);
+      const g = parseInt(full.slice(2,4),16);
+      const b = parseInt(full.slice(4,6),16);
+      return `rgba(${r},${g},${b},${alpha})`;
+    }
+
+    const SESSION_START_MIN = timeToMin(SESSION_START);
+    const SESSION_END_MIN   = timeToMin(SESSION_END);
+
+    function normalizePoster(p){
+      const out = {...p};
+      if(!Array.isArray(out.slots)) out.slots = [];
+      if(out.slots.length===0 && out.start && out.end){
+        out.slots = [{start: out.start, end: out.end}];
+      }
+      out.slots = out.slots
+        .map(s => ({start: s?.start ?? "", end: s?.end ?? ""}))
+        .filter(s => timeToMin(s.start)!==null && timeToMin(s.end)!==null && timeToMin(s.end) > timeToMin(s.start))
+        .sort((a,b) => timeToMin(a.start) - timeToMin(b.start));
+      return out;
+    }
+
+    function isActiveSlot(slot, nowMin){
+      const s = timeToMin(slot.start), e = timeToMin(slot.end);
+      if(s===null || e===null) return false;
+      return (s <= nowMin) && (nowMin < e);
+    }
+    function isActivePoster(p, nowMin){
+      const pp = normalizePoster(p);
+      return pp.slots.some(sl => isActiveSlot(sl, nowMin));
+    }
+    function activeSlotOfPoster(p, nowMin){
+      const pp = normalizePoster(p);
+      return pp.slots.find(sl => isActiveSlot(sl, nowMin)) || null;
+    }
+    function nextSlotOfPoster(p, nowMin){
+      const pp = normalizePoster(p);
+      return pp.slots.find(sl => timeToMin(sl.start) !== null && timeToMin(sl.start) > nowMin) || null;
+    }
+    function intersectsRangeSlot(slot, fromMin, toMin){
+      const s = timeToMin(slot.start), e = timeToMin(slot.end);
+      if(s===null || e===null) return false;
+      const A = (fromMin===null) ? -Infinity : fromMin;
+      const B = (toMin===null) ? Infinity : toMin;
+      return !(e <= A || B <= s);
+    }
+    function intersectsRangePoster(p, fromMin, toMin){
+      if(fromMin===null && toMin===null) return true;
+      const pp = normalizePoster(p);
+      if(pp.slots.length===0) return false;
+      return pp.slots.some(sl => intersectsRangeSlot(sl, fromMin, toMin));
+    }
+
+    // lanes if overlap
+    function computeLanes(slots){
+      const items = slots.map((sl, idx) => ({
+        ...sl,
+        idx,
+        s: timeToMin(sl.start),
+        e: timeToMin(sl.end)
+      })).filter(x => x.s!==null && x.e!==null && x.e>x.s);
+
+      items.sort((a,b)=>a.s-b.s);
+
+      const lanes = [];
+      const placed = [];
+
+      for(const it of items){
+        let placedLane = -1;
+        for(let i=0;i<lanes.length;i++){
+          if(lanes[i] <= it.s){ placedLane = i; break; }
+        }
+        if(placedLane === -1){
+          lanes.push(it.e);
+          placedLane = lanes.length-1;
+        }else{
+          lanes[placedLane] = it.e;
+        }
+        placed.push({slot: it, lane: placedLane});
+      }
+      return {laneCount: lanes.length, placed};
+    }
+
+    function slotColorByIndex(i){
+      return SLOT_COLORS[i % SLOT_COLORS.length];
+    }
+
+    /***********************
+     * Data template (25 items)
+     ***********************/
+    let posters = (() => {
+      const arr = [];
+      let n = 1;
+      const pushN = (cat, count) => {
+        for(let i=0;i<count;i++){
+          arr.push({
+            id: String(n).padStart(2,"0"),
+            title: `発表タイトル${n}`,
+            presenter: `発表者${n}`,
+            category: cat,
+            board: `P-${String(n).padStart(2,"0")}`,
+            slots: []
+          });
+          n++;
+        }
+      };
+      pushN("有志", 13);
+      pushN("他附属", 9);
+      pushN("RU", 3);
+      return arr;
+    })();
+
+    /***********************
+     * State
+     ***********************/
+    const state = {
+      onlyNow: false,
+      timelineOn: false,
+      selectedCats: new Set(), // set after categories are built
+      q: "",
+      fromMin: null,
+      toMin: null
+    };
+    let manualNowMin = null;
+
+    function getNowMin(){
+      if(manualNowMin !== null) return manualNowMin;
+      const d = new Date();
+      return d.getHours()*60 + d.getMinutes();
+    }
+
+    function updateClock(){
+      const nowMin = getNowMin();
+      $("#clockText").textContent = minToTime(nowMin);
+      $("#clockBadge").textContent = (manualNowMin===null) ? "NOW" : "FIXED";
+      $("#clockMode").textContent = (manualNowMin===null) ? "リアルタイム" : "手動固定";
+
+      $("#manualState").textContent = (manualNowMin===null) ? "リアルタイム" : "手動固定中";
+      $("#manualStateTime").textContent = (manualNowMin===null) ? "—" : minToTime(manualNowMin);
+    }
+
+    function setOnlyNow(on){
+      state.onlyNow = on;
+      $("#onlyNowBtn").classList.toggle("primary", on);
+      $("#onlyNowCheckbox").checked = on;
+      apply();
+    }
+    function setTimeline(on){
+      state.timelineOn = on;
+      $("#timelineToggleBtn").classList.toggle("primary", on);
+      apply();
+    }
+    function readAdminFilters(){
+      state.fromMin = timeToMin($("#fromTime").value);
+      state.toMin   = timeToMin($("#toTime").value);
+    }
+
+    function extractCategories(data){
+      const set = new Set();
+      for(const p of data){
+        const c = (p?.category ?? "").trim();
+        if(c) set.add(c);
+      }
+      return [...set].sort((a,b)=>a.localeCompare(b, "ja"));
+    }
+
+    // stable per-category color
+    function categoryColor(cat){
+      // simple hash -> hue
+      let h = 0;
+      for(let i=0;i<cat.length;i++){ h = (h*31 + cat.charCodeAt(i)) >>> 0; }
+      const hue = h % 360;
+      return `hsl(${hue} 80% 65%)`;
+    }
+
+    function rebuildCategoryChips(){
+      const cats = extractCategories(posters);
+      const root = $("#catChips");
+      root.innerHTML = "";
+
+      // init selection: if empty, select all
+      if(state.selectedCats.size === 0){
+        cats.forEach(c => state.selectedCats.add(c));
+      }else{
+        // remove categories that no longer exist
+        for(const c of [...state.selectedCats]){
+          if(!cats.includes(c)) state.selectedCats.delete(c);
+        }
+        // if selection became empty, select all
+        if(state.selectedCats.size === 0){
+          cats.forEach(c => state.selectedCats.add(c));
+        }
+      }
+
+      for(const cat of cats){
+        const chip = document.createElement("div");
+        chip.className = "chip";
+        chip.dataset.cat = cat;
+        const ccol = categoryColor(cat);
+        chip.innerHTML = `<span class="dot" style="background:${ccol}; box-shadow:0 0 0 3px ${hexToRgba("#ffffff",0.06)}"></span><span>${escapeHtml(cat)}</span>`;
+        chip.classList.toggle("off", !state.selectedCats.has(cat));
+        chip.addEventListener("click", () => {
+          if(state.selectedCats.has(cat)) state.selectedCats.delete(cat);
+          else state.selectedCats.add(cat);
+          chip.classList.toggle("off", !state.selectedCats.has(cat));
+          apply();
+        });
+        root.appendChild(chip);
+      }
+    }
+
+    function filteredPosters(){
+      const nowMin = getNowMin();
+      const q = state.q.trim().toLowerCase();
+
+      let arr = posters.map(normalizePoster).filter(p => {
+        if(state.selectedCats.size>0 && !state.selectedCats.has(p.category)) return false;
+
+        if(q){
+          const hay = `${p.title} ${p.presenter} ${p.board}`.toLowerCase();
+          if(!hay.includes(q)) return false;
+        }
+
+        if(!intersectsRangePoster(p, state.fromMin, state.toMin)) return false;
+        if(state.onlyNow && !isActivePoster(p, nowMin)) return false;
+
+        return true;
+      });
+
+      // sort: active now first, then next soonest, then board
+      arr.sort((a,b) => {
+        const aAct = isActivePoster(a, nowMin) ? 0 : 1;
+        const bAct = isActivePoster(b, nowMin) ? 0 : 1;
+        if(aAct !== bAct) return aAct - bAct;
+
+        const aNext = nextSlotOfPoster(a, nowMin);
+        const bNext = nextSlotOfPoster(b, nowMin);
+        const aT = aNext ? timeToMin(aNext.start) : (a.slots[0] ? timeToMin(a.slots[0].start) : 99999);
+        const bT = bNext ? timeToMin(bNext.start) : (b.slots[0] ? timeToMin(b.slots[0].start) : 99999);
+        if(aT !== bT) return aT - bT;
+
+        return String(a.board).localeCompare(String(b.board));
+      });
+
+      $("#countText").textContent = `${arr.length} / ${posters.length} 件`;
+      return arr;
+    }
+
+    function statusTextForPoster(p, nowMin){
+      const pp = normalizePoster(p);
+      const active = activeSlotOfPoster(pp, nowMin);
+      if(active){
+        const endMin = timeToMin(active.end);
+        const remain = Math.max(0, endMin - nowMin);
+        return { cls: "statusText active", text: `発表中 残り${remain}分` };
+      }
+      const next = nextSlotOfPoster(pp, nowMin);
+      if(next){
+        const startMin = timeToMin(next.start);
+        const mins = Math.max(0, startMin - nowMin);
+        return { cls: "statusText soon", text: `${mins}分後に発表` };
+      }
+      if(pp.slots.length===0){
+        return { cls: "statusText", text: "時間未入力" };
+      }
+      return { cls: "statusText", text: "以降の発表なし" };
+    }
+
+    function renderTimeTagsHtml(slots){
+      if(!slots || slots.length===0) return `<span style="color:#9ca3af;">時間未入力</span>`;
+      return slots.map((sl, i) => {
+        const c = slotColorByIndex(i);
+        const label = `${sl.start}–${sl.end}`;
+        return `
+          <span class="timeTag"
+            style="border-color:${c}; background:${hexToRgba(c,0.12)};">
+            ${escapeHtml(label)}
+          </span>
+        `;
+      }).join("");
+    }
+
+    function renderPosterTimeline(p, nowMin){
+      const pp = normalizePoster(p);
+      const minV = SESSION_START_MIN;
+      const maxV = SESSION_END_MIN;
+      const span = maxV - minV;
+
+      const wrap = document.createElement("div");
+      wrap.className = "pTimeline" + (state.timelineOn ? " on" : "");
+      wrap.innerHTML = `
+        <div class="pTimelineTop">
+          <div class="small">タイムライン</div>
+          <div class="range">${SESSION_START}–${SESSION_END}</div>
+        </div>
+        <div class="pTrack" style="height:34px;"></div>
+      `;
+
+      const track = $(".pTrack", wrap);
+
+      // now mark
+      if(nowMin>=minV && nowMin<=maxV){
+        const nowX = ((nowMin-minV)/span)*100;
+        const mark = document.createElement("div");
+        mark.className = "pNowMark";
+        mark.style.left = `${nowX}%`;
+        track.appendChild(mark);
+      }
+
+      // lanes if overlap
+      const {laneCount, placed} = computeLanes(pp.slots);
+      const laneGap = 14;
+      const baseTop = 10;
+      const neededH = Math.max(34, baseTop + laneCount*laneGap);
+      track.style.height = `${neededH}px`;
+
+      placed.forEach(({slot, lane}) => {
+        const s = slot.s, e = slot.e;
+        const x1 = ((s - minV)/span)*100;
+        const x2 = ((e - minV)/span)*100;
+
+        const c = slotColorByIndex(slot.idx);
+
+        const bar = document.createElement("div");
+        bar.className = "pBar";
+        bar.style.left = `${x1}%`;
+        bar.style.width = `${Math.max(1, x2-x1)}%`;
+        bar.style.top = `${baseTop + lane*laneGap}px`;
+
+        bar.style.borderColor = c;
+        bar.style.background = hexToRgba(c, 0.22);
+
+        if(nowMin >= s && nowMin < e) bar.classList.add("active");
+        track.appendChild(bar);
+      });
+
+      return wrap;
+    }
+
+    function renderList(items, nowMin){
+      const root = $("#viewList");
+      root.innerHTML = "";
+
+      if(items.length===0){
+        const e = document.createElement("div");
+        e.className = "item";
+        e.innerHTML = `<p class="title">条件に一致する発表がありません。</p><div class="meta">カテゴリや検索条件を調整してください。</div>`;
+        root.appendChild(e);
+        return;
+      }
+
+      for(const p of items){
+        const isAct = isActivePoster(p, nowMin);
+        const st = statusTextForPoster(p, nowMin);
+        const catCol = categoryColor(p.category);
+
+        const el = document.createElement("div");
+        el.className = "item" + (isAct ? " active" : "");
+
+        el.innerHTML = `
+          <div class="itemTop">
+            <div class="leftBlock">
+              <div class="line1">
+                <span class="board">${escapeHtml(p.board)}</span>
+                <span class="presenterRow">
+                  <span class="presenter">${escapeHtml(p.presenter)}</span>
+                  <span class="catMini" data-cat="${escapeHtml(p.category)}">
+                    <span class="dot" style="background:${catCol};"></span><span>${escapeHtml(p.category)}</span>
+                  </span>
+                </span>
+              </div>
+              <p class="title">${escapeHtml(p.title)}</p>
+
+              <!-- NEW: status under title, right aligned -->
+              <div class="statusBelow">
+                <div class="${st.cls}">${escapeHtml(st.text)}</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="meta">
+            <span>時間：</span>
+            <span class="timeTags">${renderTimeTagsHtml(p.slots)}</span>
+          </div>
+        `;
+
+        el.appendChild(renderPosterTimeline(p, nowMin));
+        root.appendChild(el);
+      }
+    }
+
+    function syncJsonArea(){
+      $("#jsonArea").value = JSON.stringify(posters.map(normalizePoster), null, 2);
+    }
+    function applyJson(){
+      try{
+        const obj = JSON.parse($("#jsonArea").value);
+        if(!Array.isArray(obj)) throw new Error("JSONは配列（[]）である必要があります。");
+        posters = obj.map(p => {
+          if(!p.title || !p.category || !p.board) throw new Error("各要素に title/category/board が必要です。");
+          return normalizePoster(p);
+        });
+        rebuildCategoryChips();
+        apply();
+      }catch(e){
+        alert("反映できませんでした：\n" + e.message);
+      }
+    }
+    function demoFillTimes(){
+      function randInt(a,b){ return Math.floor(Math.random()*(b-a+1))+a; }
+      posters = posters.map(normalizePoster).map((p, idx) => {
+        const slots = [];
+        const makeSlot = (base) => {
+          const start = base + randInt(0, 55);
+          const dur = randInt(8, 16);
+          const s = Math.max(SESSION_START_MIN, Math.min(start, SESSION_END_MIN-5));
+          const e = Math.min(SESSION_END_MIN, s + dur);
+          return {start: minToTime(s), end: minToTime(e)};
+        };
+        const count = (idx % 3 === 0) ? 2 : 1;
+        const base1 = SESSION_START_MIN + (idx*3) % (SESSION_END_MIN-SESSION_START_MIN-20);
+        slots.push(makeSlot(base1));
+        if(count===2){
+          const base2 = SESSION_START_MIN + (idx*7) % (SESSION_END_MIN-SESSION_START_MIN-20);
+          slots.push(makeSlot(base2));
+        }
+        slots.sort((a,b) => timeToMin(a.start)-timeToMin(b.start));
+        return {...p, slots};
+      });
+      rebuildCategoryChips();
+      syncJsonArea();
+      apply();
+    }
+
+    function apply(){
+      const nowMin = getNowMin();
+      updateClock();
+
+      const items = filteredPosters();
+      renderList(items, nowMin);
+    }
+
+    function wire(){
+      $("#sessionText").textContent = `${SESSION_START}–${SESSION_END}`;
+
+      $("#q").addEventListener("input", (e) => { state.q = e.target.value; apply(); });
+      $("#clearSearchBtn").addEventListener("click", () => { $("#q").value=""; state.q=""; apply(); });
+
+      $("#onlyNowBtn").addEventListener("click", () => setOnlyNow(!state.onlyNow));
+      $("#timelineToggleBtn").addEventListener("click", () => setTimeline(!state.timelineOn));
+
+      $("#fromTime").addEventListener("input", () => { readAdminFilters(); apply(); });
+      $("#toTime").addEventListener("input", () => { readAdminFilters(); apply(); });
+      $("#onlyNowCheckbox").addEventListener("change", (e) => setOnlyNow(e.target.checked));
+
+      $("#resetBtn").addEventListener("click", () => {
+        state.q = ""; $("#q").value="";
+        state.selectedCats.clear(); // will be re-selected in rebuild
+        $("#fromTime").value=""; $("#toTime").value="";
+        state.fromMin=null; state.toMin=null;
+        setOnlyNow(false);
+        rebuildCategoryChips();
+        apply();
+      });
+
+      $("#setManualBtn").addEventListener("click", () => {
+        const t = $("#manualTime").value;
+        const m = timeToMin(t);
+        if(m===null){ alert("手動時刻（HH:MM）を入力してください"); return; }
+        manualNowMin = m;
+        apply();
+      });
+      $("#clearManualBtn").addEventListener("click", () => { manualNowMin = null; apply(); });
+
+      $("#applyJsonBtn").addEventListener("click", applyJson);
+      $("#reloadJsonBtn").addEventListener("click", syncJsonArea);
+      $("#exportBtn").addEventListener("click", () => {
+        const text = JSON.stringify(posters.map(normalizePoster), null, 2);
+        navigator.clipboard?.writeText(text).then(() => alert("JSONをクリップボードにコピーしました。"))
+          .catch(() => { syncJsonArea(); alert("コピーに失敗したため、JSON欄から手動でコピーしてください。"); });
+      });
+
+      $("#demoFillBtn").addEventListener("click", demoFillTimes);
+
+      $("#scrollTopBtn").addEventListener("click", () => window.scrollTo({top:0,behavior:"smooth"}));
+      $("#scrollAdminBtn").addEventListener("click", () => $("#admin").scrollIntoView({behavior:"smooth",block:"start"}));
+
+      posters = posters.map(normalizePoster);
+      syncJsonArea();
+      readAdminFilters();
+      rebuildCategoryChips();
+      updateClock();
+      apply();
+    }
+
+    function startTicker(){
+      setInterval(() => {
+        if(manualNowMin===null) apply();
+        else updateClock();
+      }, 30 * 1000);
+    }
+
+    wire();
+    startTicker();
+  </script>
+</body>
+</html>
