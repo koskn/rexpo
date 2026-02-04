@@ -178,7 +178,11 @@ function slotsFromCell(cell){
 function postersFromCsv(text){
   const rows = parseCsv(text);
   if(rows.length === 0) return [];
-  const header = rows[0].map(h => h.trim().toLowerCase());
+  const header = rows[0].map((h, i) => {
+    const v = String(h ?? "");
+    const noBom = (i === 0) ? v.replace(/^\uFEFF/, "") : v;
+    return noBom.trim().toLowerCase();
+  });
   const idx = (name) => header.indexOf(name);
   const iId = idx("id");
   const iTitle = idx("title");
