@@ -1,5 +1,5 @@
 /***********************
- * Session
+ * Session2
  ***********************/
 const SESSION_START = "10:30";
 const SESSION_END   = "12:30";
