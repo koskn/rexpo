@@ -135,9 +135,79 @@ function slotColorByIndex(i){
  ***********************/
 let posters = [];
 
+function parseCsv(text){
+  const rows = [];
+  let row = [];
+  let cur = "";
+  let inQuotes = false;
+  for(let i=0;i<text.length;i++){
+    const ch = text[i];
+    const next = text[i+1];
+    if(inQuotes){
+      if(ch === "\"" && next === "\""){ cur += "\""; i++; continue; }
+      if(ch === "\""){ inQuotes = false; continue; }
+      cur += ch;
+      continue;
+    }
+    if(ch === "\""){ inQuotes = true; continue; }
+    if(ch === ","){ row.push(cur); cur=""; continue; }
+    if(ch === "\n"){
+      row.push(cur); cur="";
+      if(row.length > 1 || row[0] !== "") rows.push(row);
+      row = [];
+      continue;
+    }
+    if(ch === "\r"){ continue; }
+    cur += ch;
+  }
+  row.push(cur);
+  if(row.length > 1 || row[0] !== "") rows.push(row);
+  return rows;
+}
+
+function slotsFromCell(cell){
+  const text = (cell ?? "").trim();
+  if(!text) return [];
+  // 例: 10:30-11:00|11:30-12:00
+  return text.split("|").map(s => s.trim()).filter(Boolean).map(pair => {
+    const m = pair.split("-").map(x => x.trim());
+    return {start: m[0] ?? "", end: m[1] ?? ""};
+  });
+}
+
+function postersFromCsv(text){
+  const rows = parseCsv(text);
+  if(rows.length === 0) return [];
+  const header = rows[0].map(h => h.trim().toLowerCase());
+  const idx = (name) => header.indexOf(name);
+  const iId = idx("id");
+  const iTitle = idx("title");
+  const iPresenter = idx("presenter");
+  const iCategory = idx("category");
+  const iBoard = idx("board");
+  const iSlots = idx("slots");
+  return rows.slice(1).map(r => {
+    const p = {
+      id: iId >= 0 ? (r[iId] ?? "").trim() : "",
+      title: iTitle >= 0 ? (r[iTitle] ?? "").trim() : "",
+      presenter: iPresenter >= 0 ? (r[iPresenter] ?? "").trim() : "",
+      category: iCategory >= 0 ? (r[iCategory] ?? "").trim() : "",
+      board: iBoard >= 0 ? (r[iBoard] ?? "").trim() : "",
+      slots: iSlots >= 0 ? slotsFromCell(r[iSlots]) : []
+    };
+    return normalizePoster(p);
+  }).filter(p => p.title || p.presenter || p.board || p.category || p.id);
+}
+
 async function loadPosters(){
+  // prefer CSV if available, fallback to JSON
+  const csvRes = await fetch("data.csv", {cache: "no-store"});
+  if(csvRes.ok){
+    const text = await csvRes.text();
+    return postersFromCsv(text);
+  }
   const res = await fetch("data.json", {cache: "no-store"});
-  if(!res.ok) throw new Error("data.jsonを読み込めませんでした。");
+  if(!res.ok) throw new Error("data.csv / data.json を読み込めませんでした。");
   const data = await res.json();
   if(!Array.isArray(data)) throw new Error("data.jsonは配列（[]）である必要があります。");
   return data.map(normalizePoster);
