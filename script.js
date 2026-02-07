@@ -21,6 +21,10 @@ const SLOT_COLORS = [
  ***********************/
 const $ = (sel, root=document) => root.querySelector(sel);
 const $$ = (sel, root=document) => [...root.querySelectorAll(sel)];
+const on = (sel, ev, fn) => {
+  const el = $(sel);
+  if(el) el.addEventListener(ev, fn);
+};
 function pad2(x){ return String(x).padStart(2,"0"); }
 
 function timeToMin(t){
@@ -264,8 +268,10 @@ function setTimeline(on){
   apply();
 }
 function readAdminFilters(){
-  state.fromMin = timeToMin($("#fromTime").value);
-  state.toMin   = timeToMin($("#toTime").value);
+  const fromEl = $("#fromTime");
+  const toEl = $("#toTime");
+  state.fromMin = timeToMin(fromEl ? fromEl.value : "");
+  state.toMin   = timeToMin(toEl ? toEl.value : "");
 }
 
 function extractCategories(data){
@@ -573,26 +579,26 @@ function wire(){
   if(sessionStorage.getItem("adminUnlocked") === "1"){
     setAdminUnlocked(true);
   }
-  $("#adminUnlockBtn")?.addEventListener("click", unlockFromInput);
-  $("#adminPass")?.addEventListener("keydown", (e) => {
+  on("#adminUnlockBtn", "click", unlockFromInput);
+  on("#adminPass", "keydown", (e) => {
     if(e.key === "Enter") unlockFromInput();
   });
-  $("#adminGateBtn")?.addEventListener("click", () => {
+  on("#adminGateBtn", "click", () => {
     document.body.classList.toggle("admin-gate-open");
     $("#adminPass")?.focus();
   });
 
-  $("#q").addEventListener("input", (e) => { state.q = e.target.value; apply(); });
-  $("#clearSearchBtn").addEventListener("click", () => { $("#q").value=""; state.q=""; apply(); });
+  on("#q", "input", (e) => { state.q = e.target.value; apply(); });
+  on("#clearSearchBtn", "click", () => { $("#q").value=""; state.q=""; apply(); });
 
-  $("#onlyNowBtn").addEventListener("click", () => setOnlyNow(!state.onlyNow));
-  $("#timelineToggleBtn").addEventListener("click", () => setTimeline(!state.timelineOn));
+  on("#onlyNowBtn", "click", () => setOnlyNow(!state.onlyNow));
+  on("#timelineToggleBtn", "click", () => setTimeline(!state.timelineOn));
 
-  $("#fromTime").addEventListener("input", () => { readAdminFilters(); apply(); });
-  $("#toTime").addEventListener("input", () => { readAdminFilters(); apply(); });
-  $("#onlyNowCheckbox").addEventListener("change", (e) => setOnlyNow(e.target.checked));
+  on("#fromTime", "input", () => { readAdminFilters(); apply(); });
+  on("#toTime", "input", () => { readAdminFilters(); apply(); });
+  on("#onlyNowCheckbox", "change", (e) => setOnlyNow(e.target.checked));
 
-  $("#resetBtn").addEventListener("click", () => {
+  on("#resetBtn", "click", () => {
     state.q = ""; $("#q").value="";
     state.selectedCats.clear(); // will be re-selected in rebuild
     $("#fromTime").value=""; $("#toTime").value="";
@@ -602,26 +608,26 @@ function wire(){
     apply();
   });
 
-  $("#setManualBtn").addEventListener("click", () => {
+  on("#setManualBtn", "click", () => {
     const t = $("#manualTime").value;
     const m = timeToMin(t);
     if(m===null){ alert("手動時刻（HH:MM）を入力してください"); return; }
     manualNowMin = m;
     apply();
   });
-  $("#clearManualBtn").addEventListener("click", () => { manualNowMin = null; apply(); });
+  on("#clearManualBtn", "click", () => { manualNowMin = null; apply(); });
 
-  $("#applyJsonBtn").addEventListener("click", applyJson);
-  $("#reloadJsonBtn").addEventListener("click", syncJsonArea);
-  $("#exportBtn").addEventListener("click", () => {
+  on("#applyJsonBtn", "click", applyJson);
+  on("#reloadJsonBtn", "click", syncJsonArea);
+  on("#exportBtn", "click", () => {
     const text = JSON.stringify(posters.map(normalizePoster), null, 2);
     navigator.clipboard?.writeText(text).then(() => alert("JSONをクリップボードにコピーしました。"))
       .catch(() => { syncJsonArea(); alert("コピーに失敗したため、JSON欄から手動でコピーしてください。"); });
   });
 
-  $("#demoFillBtn").addEventListener("click", demoFillTimes);
+  on("#demoFillBtn", "click", demoFillTimes);
 
-  $("#scrollTopBtn").addEventListener("click", () => window.scrollTo({top:0,behavior:"smooth"}));
+  on("#scrollTopBtn", "click", () => window.scrollTo({top:0,behavior:"smooth"}));
 
   syncJsonArea();
   readAdminFilters();
