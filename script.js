@@ -401,9 +401,6 @@ function renderPosterTimeline(p, nowMin){
   const wrap = document.createElement("div");
   wrap.className = "pTimeline" + (state.timelineOn ? " on" : "");
   wrap.innerHTML = `
-    <div class="pTimelineTop">
-      <div class="range">${SESSION_START}–${SESSION_END}</div>
-    </div>
     <div class="pTrack" style="height:34px;"></div>
   `;
 
@@ -489,10 +486,6 @@ function renderList(items, nowMin){
         </div>
       </div>
 
-      <div class="meta">
-        <span>発表時間：</span>
-        <span class="timeTags">${renderTimeTagsHtml(p.slots)}</span>
-      </div>
     `;
 
     el.appendChild(renderPosterTimeline(p, nowMin));
