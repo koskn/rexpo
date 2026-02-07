@@ -486,6 +486,10 @@ function renderList(items, nowMin){
         </div>
       </div>
 
+      <div class="meta">
+        <span>発表時間：</span>
+        <span class="timeTags">${renderTimeTagsHtml(p.slots)}</span>
+      </div>
     `;
 
     el.appendChild(renderPosterTimeline(p, nowMin));
