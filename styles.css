@@ -31,6 +31,8 @@ body{
 .small{font-size:12px;color:var(--muted)}
 .mono{font-family:var(--mono)}
 h1{font-size:15px;margin:0;letter-spacing:.2px}
+.admin-only{display:none}
+body.admin-unlocked .admin-only{display:inline-block}
 
 /* sticky top */
 .top{
@@ -175,6 +177,18 @@ input[type="text"]::placeholder{color:rgba(156,163,175,.8)}
 .chip.off{opacity:.55; filter: grayscale(.4)}
 
 .list{margin-top:12px;display:grid;gap:10px}
+.adminGate{
+  margin-top:12px;
+  display:grid;
+  gap:6px;
+}
+.adminGateRow{
+  display:grid;
+  grid-template-columns: 1fr auto;
+  gap:8px;
+  align-items:center;
+}
+body.admin-unlocked .adminGate{display:none}
 .item{
   padding:12px;
   border-radius:18px;
@@ -362,6 +376,7 @@ input[type="text"]::placeholder{color:rgba(156,163,175,.8)}
 
 /* admin */
 .admin{margin-top:18px;border-top:1px dashed rgba(255,255,255,.16);padding-top:14px}
+body:not(.admin-unlocked) .admin{display:none}
 details{border-radius:16px;border:1px solid rgba(255,255,255,.10); background:rgba(255,255,255,.02); overflow:hidden}
 summary{cursor:pointer; padding:12px 12px; list-style:none; user-select:none}
 summary::-webkit-details-marker{display:none}

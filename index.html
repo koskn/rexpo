@@ -21,15 +21,15 @@
         <div class="clock">
           <div class="t" id="clockText">--:--</div>
           <div>
-            <span class="badge" id="clockBadge">NOW</span>
-            <span class="small" id="clockMode">リアルタイム</span>
+            <span class="badge admin-only" id="clockBadge">NOW</span>
+            <span class="small admin-only" id="clockMode">リアルタイム</span>
           </div>
         </div>
       </div>
 
       <div class="controls">
         <div class="searchRow">
-          <input id="q" type="text" placeholder="検索：題目 / 発表者 / ポスター番号（例：P-12）" />
+          <input id="q" type="text" placeholder="検索：タイトル ※氏名では検索不可 " />
           <button class="pillBtn icon" id="clearSearchBtn" aria-label="検索をクリア">×</button>
         </div>
 
@@ -45,6 +45,15 @@
 
   <div class="wrap" id="app">
     <div id="viewList" class="list"></div>
+
+    <div class="adminGate card pad" id="adminGate">
+      <div class="small" style="margin-bottom:8px;">管理者用（デモUI表示）</div>
+      <div class="adminGateRow">
+        <input id="adminPass" type="password" placeholder="パスワードを入力" />
+        <button class="pillBtn" id="adminUnlockBtn">表示</button>
+      </div>
+      <div class="small" id="adminGateMsg" style="margin-top:6px;"></div>
+    </div>
 
     <!-- DEMO / ADMIN at bottom -->
     <div class="admin" id="admin">

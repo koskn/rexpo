@@ -229,6 +229,7 @@ const state = {
   toMin: null
 };
 let manualNowMin = null;
+const ADMIN_PASSWORD = "tagosaku";
 
 function syncModeButtons(){
   $("#onlyNowBtn").classList.toggle("primary", state.onlyNow);
@@ -550,6 +551,31 @@ function apply(){
 
 function wire(){
   $("#sessionText").textContent = `${SESSION_START}–${SESSION_END}`;
+
+  const setAdminUnlocked = (on) => {
+    document.body.classList.toggle("admin-unlocked", on);
+    sessionStorage.setItem("adminUnlocked", on ? "1" : "0");
+  };
+  const unlockFromInput = () => {
+    const input = $("#adminPass");
+    const msg = $("#adminGateMsg");
+    const ok = (input.value || "") === ADMIN_PASSWORD;
+    if(ok){
+      setAdminUnlocked(true);
+      input.value = "";
+      msg.textContent = "管理者UIを表示しました。";
+    }else{
+      msg.textContent = "パスワードが違います。";
+    }
+  };
+
+  if(sessionStorage.getItem("adminUnlocked") === "1"){
+    setAdminUnlocked(true);
+  }
+  $("#adminUnlockBtn")?.addEventListener("click", unlockFromInput);
+  $("#adminPass")?.addEventListener("keydown", (e) => {
+    if(e.key === "Enter") unlockFromInput();
+  });
 
   $("#q").addEventListener("input", (e) => { state.q = e.target.value; apply(); });
   $("#clearSearchBtn").addEventListener("click", () => { $("#q").value=""; state.q=""; apply(); });
