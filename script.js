@@ -564,6 +564,7 @@ function wire(){
       setAdminUnlocked(true);
       input.value = "";
       msg.textContent = "管理者UIを表示しました。";
+      document.body.classList.remove("admin-gate-open");
     }else{
       msg.textContent = "パスワードが違います。";
     }
@@ -575,6 +576,10 @@ function wire(){
   $("#adminUnlockBtn")?.addEventListener("click", unlockFromInput);
   $("#adminPass")?.addEventListener("keydown", (e) => {
     if(e.key === "Enter") unlockFromInput();
+  });
+  $("#adminGateBtn")?.addEventListener("click", () => {
+    document.body.classList.toggle("admin-gate-open");
+    $("#adminPass")?.focus();
   });
 
   $("#q").addEventListener("input", (e) => { state.q = e.target.value; apply(); });
