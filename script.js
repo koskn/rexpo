@@ -222,13 +222,19 @@ async function loadPosters(){
  ***********************/
 const state = {
   onlyNow: false,
-  timelineOn: false,
+  timelineOn: true,
   selectedCats: new Set(), // set after categories are built
   q: "",
   fromMin: null,
   toMin: null
 };
 let manualNowMin = null;
+
+function syncModeButtons(){
+  $("#onlyNowBtn").classList.toggle("primary", state.onlyNow);
+  $("#onlyNowCheckbox").checked = state.onlyNow;
+  $("#timelineToggleBtn").classList.toggle("primary", state.timelineOn);
+}
 
 function getNowMin(){
   if(manualNowMin !== null) return manualNowMin;
@@ -248,13 +254,12 @@ function updateClock(){
 
 function setOnlyNow(on){
   state.onlyNow = on;
-  $("#onlyNowBtn").classList.toggle("primary", on);
-  $("#onlyNowCheckbox").checked = on;
+  syncModeButtons();
   apply();
 }
 function setTimeline(on){
   state.timelineOn = on;
-  $("#timelineToggleBtn").classList.toggle("primary", on);
+  syncModeButtons();
   apply();
 }
 function readAdminFilters(){
@@ -397,7 +402,6 @@ function renderPosterTimeline(p, nowMin){
   wrap.className = "pTimeline" + (state.timelineOn ? " on" : "");
   wrap.innerHTML = `
     <div class="pTimelineTop">
-      <div class="small">タイムライン</div>
       <div class="range">${SESSION_START}–${SESSION_END}</div>
     </div>
     <div class="pTrack" style="height:34px;"></div>
@@ -486,7 +490,7 @@ function renderList(items, nowMin){
       </div>
 
       <div class="meta">
-        <span>時間：</span>
+        <span>発表時間：</span>
         <span class="timeTags">${renderTimeTagsHtml(p.slots)}</span>
       </div>
     `;
@@ -596,6 +600,7 @@ function wire(){
   readAdminFilters();
   rebuildCategoryChips();
   updateClock();
+  syncModeButtons();
   apply();
 }
 
