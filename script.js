@@ -380,9 +380,9 @@ function statusTextForPoster(p, nowMin){
     return { cls: "statusText soon", text: `${mins}分後に発表` };
   }
   if(pp.slots.length===0){
-    return { cls: "statusText", text: "時間未入力" };
+    return { cls: "statusText", text: "掲示のみ" };
   }
-  return { cls: "statusText", text: "全発表終了" };
+  return { cls: "statusText", text: "発表終了" };
 }
 
 function renderTimeTagsHtml(slots){
