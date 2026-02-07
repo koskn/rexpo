@@ -622,7 +622,6 @@ function wire(){
   $("#demoFillBtn").addEventListener("click", demoFillTimes);
 
   $("#scrollTopBtn").addEventListener("click", () => window.scrollTo({top:0,behavior:"smooth"}));
-  $("#scrollAdminBtn").addEventListener("click", () => $("#admin").scrollIntoView({behavior:"smooth",block:"start"}));
 
   syncJsonArea();
   readAdminFilters();
