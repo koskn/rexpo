@@ -584,6 +584,11 @@ function wire(){
     if(e.key === "Enter") unlockFromInput();
   });
   on("#adminGateBtn", "click", () => {
+    if(document.body.classList.contains("admin-unlocked")){
+      setAdminUnlocked(false);
+      document.body.classList.remove("admin-gate-open");
+      return;
+    }
     document.body.classList.toggle("admin-gate-open");
     $("#adminPass")?.focus();
   });
