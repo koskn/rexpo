@@ -280,7 +280,17 @@ function extractCategories(data){
     const c = (p?.category ?? "").trim();
     if(c) set.add(c);
   }
-  return [...set].sort((a,b)=>a.localeCompare(b, "ja"));
+  const CATEGORY_ORDER = ["慶祥","国際共同","宇治","長岡京","中3総合","RU"];
+  const rank = (cat) => {
+    const i = CATEGORY_ORDER.indexOf((cat ?? "").trim());
+    return i === -1 ? 999 : i;
+  };
+  return [...set].sort((a,b) => {
+    const ra = rank(a);
+    const rb = rank(b);
+    if(ra !== rb) return ra - rb;
+    return a.localeCompare(b, "ja");
+  });
 }
 
 // stable per-category color
