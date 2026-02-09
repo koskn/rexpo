@@ -346,17 +346,34 @@ function filteredPosters(){
     return true;
   });
 
-  // sort: active now first, then next soonest, then board
+  // sort: active now first, then category order, then time rule, then board
+  const CATEGORY_ORDER = ["慶祥","国際共同","宇治","長岡京","中3総合","RU"];
+  const categoryRank = (cat) => {
+    const i = CATEGORY_ORDER.indexOf((cat ?? "").trim());
+    return i === -1 ? 999 : i;
+  };
   arr.sort((a,b) => {
     const aAct = isActivePoster(a, nowMin) ? 0 : 1;
     const bAct = isActivePoster(b, nowMin) ? 0 : 1;
     if(aAct !== bAct) return aAct - bAct;
 
-    const aNext = nextSlotOfPoster(a, nowMin);
-    const bNext = nextSlotOfPoster(b, nowMin);
-    const aT = aNext ? timeToMin(aNext.start) : (a.slots[0] ? timeToMin(a.slots[0].start) : 99999);
-    const bT = bNext ? timeToMin(bNext.start) : (b.slots[0] ? timeToMin(b.slots[0].start) : 99999);
-    if(aT !== bT) return aT - bT;
+    const aCat = categoryRank(a.category);
+    const bCat = categoryRank(b.category);
+    if(aCat !== bCat) return aCat - bCat;
+
+    if(aAct === 0){
+      const aActive = activeSlotOfPoster(a, nowMin);
+      const bActive = activeSlotOfPoster(b, nowMin);
+      const aEnd = aActive ? timeToMin(aActive.end) : Infinity;
+      const bEnd = bActive ? timeToMin(bActive.end) : Infinity;
+      if(aEnd !== bEnd) return aEnd - bEnd;
+    }else{
+      const aNext = nextSlotOfPoster(a, nowMin);
+      const bNext = nextSlotOfPoster(b, nowMin);
+      const aT = aNext ? timeToMin(aNext.start) : Infinity;
+      const bT = bNext ? timeToMin(bNext.start) : Infinity;
+      if(aT !== bT) return aT - bT;
+    }
 
     return String(a.board).localeCompare(String(b.board));
   });
